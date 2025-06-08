@@ -1,1 +1,4 @@
 mssql/server
+azureiotedge-agent
+azureiotedge-hub
+azureiotedge-api-proxy
