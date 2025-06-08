@@ -18,7 +18,7 @@ def generate_feed(repo):
     fg.link(href=data.get('projectWebsite'), rel='alternate')
     fg.description(data.get('shortDescription'))
     fg.lastBuildDate(datetime.datetime.now(datetime.UTC))
-    fg.updated(date.get('lastModifiedDate'))
+    fg.updated(data.get('lastModifiedDate'))
 
     for category in data.get('categories', []):
         fg.category(term=category)
