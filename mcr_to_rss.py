@@ -23,7 +23,7 @@ def generate_feed(repo):
     fg.description(data.get('shortDescription'))
     fg.lastBuildDate(datetime.datetime.now(datetime.UTC))
     fg.updated(data.get('lastModifiedDate'))
-    
+
     for category in data.get('categories', []):
         fg.category(term=category)
 
@@ -41,7 +41,7 @@ def generate_feed(repo):
         fe.description(f'docker pull mcr.microsoft.com/{repo}:{tag['name']}')
         fe.guid(f'{repo}:{tag['name']}', permalink=False)
 
-    fg.rss_file(output_file)
+    fg.rss_file(f'feeds/{output_file}')
     print(f"RSS feed saved to {output_file}")
 
 
