@@ -44,10 +44,16 @@ def generate_feed(repo):
 def process_repo_list(filename):
     with open (filename) as f:
         repos = f.read().strip().splitlines()
+    
+    for repo in repos:
+        try:
+            generate_feed(repo)
+        except Exception as e:
+            print(f'Failed to generate feed for {repo}: {e!r}')
 
 
 if __name__ == '__main__':
     if len(sys.argv) != 2:
         print("Usage: python mcr_to_rss.py repo_list_filename")
         sys.exit(1)
-    main(sys.argv[1])
+    process_repo_list(sys.argv[1])
