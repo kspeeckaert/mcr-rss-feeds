@@ -5,8 +5,7 @@ from feedgen.feed import FeedGenerator
 
 def main(container_image):
     repo = container_image
-    registry = 'mar'
-    url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/details?reg={registry}'
+    url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/details?reg=mar'
     output_file = f'{repo.replace("/", "_")}.xml'
 
     response = requests.get(url)
@@ -22,15 +21,15 @@ def main(container_image):
     for category in data.get('categories', []):
         fg.category(term=category)
 
-    url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/details?reg={registry}'
+    url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/tags?reg=mar'
     response = requests.get(url)
     response.raise_for_status()
-    data = response.json()
+    tag_data = response.json()
 
-    for tag in data:
+    for tag in tag_data:
         fe = fg.add_entry()
         fe.title(tag['name'])
-        fe.link(href=f'https://mcr.microsoft.com/en-us/artifact/{registry}/{repo}/tags')
+        fe.link(href=f'https://mcr.microsoft.com/en-us/artifact/mar/{repo}/tags')
         fe.published = tag.get('createdDate')
         fe.updated  = tag.get('lastModifiedDate')
         fe.description(f'docker pull mcr.microsoft.com/{repo}:{tag['name']}')
