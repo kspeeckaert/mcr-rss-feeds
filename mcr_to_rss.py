@@ -1,10 +1,11 @@
 import sys
-import requests
 import datetime
+import requests
 from feedgen.feed import FeedGenerator
 
-def main(container_image):
-    repo = container_image
+
+def generate_feed(repo):
+
     url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/details?reg=mar'
     output_file = f'{repo.replace("/", "_")}.xml'
 
@@ -14,9 +15,10 @@ def main(container_image):
 
     fg = FeedGenerator()
     fg.title(data['name'])
-    fg.link(href=data['projectWebsite'], rel='alternate')
-    fg.description(data['shortDescription'])
+    fg.link(href=data.get('projectWebsite'), rel='alternate')
+    fg.description(data.get('shortDescription'))
     fg.lastBuildDate(datetime.datetime.now(datetime.UTC))
+    fg.updated(date.get('lastModifiedDate'))
 
     for category in data.get('categories', []):
         fg.category(term=category)
@@ -30,16 +32,22 @@ def main(container_image):
         fe = fg.add_entry()
         fe.title(tag['name'])
         fe.link(href=f'https://mcr.microsoft.com/en-us/artifact/mar/{repo}/tags')
-        fe.published = tag.get('createdDate')
-        fe.updated  = tag.get('lastModifiedDate')
+        fe.published(tag.get('createdDate'))
+        fe.updated(tag.get('lastModifiedDate'))
         fe.description(f'docker pull mcr.microsoft.com/{repo}:{tag['name']}')
         fe.guid(f'{repo}:{tag['name']}', permalink=False)
 
     fg.rss_file(output_file)
     print(f"RSS feed saved to {output_file}")
 
+
+def process_repo_list(filename):
+    with open (filename) as f:
+        repos = f.read().strip().splitlines()
+
+
 if __name__ == '__main__':
     if len(sys.argv) != 2:
-        print("Usage: python mcr_to_rss.py <container-image>")
+        print("Usage: python mcr_to_rss.py repo_list_filename")
         sys.exit(1)
     main(sys.argv[1])
