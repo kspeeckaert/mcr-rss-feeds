@@ -13,13 +13,17 @@ def generate_feed(repo):
     response.raise_for_status()
     data = response.json()
 
+    #import pdb; pdb.set_trace()
     fg = FeedGenerator()
     fg.title(data['name'])
-    fg.link(href=data.get('projectWebsite'), rel='alternate')
+    # Make sure to always have a link, otherwise the RSS file is invalid
+    if (link := data.get('projectWebsite')) is None:
+        link = f'https://mcr.microsoft.com/en-us/artifact/mar/{repo}/tags'
+    fg.link(href=link, rel='alternate')
     fg.description(data.get('shortDescription'))
     fg.lastBuildDate(datetime.datetime.now(datetime.UTC))
     fg.updated(data.get('lastModifiedDate'))
-
+    
     for category in data.get('categories', []):
         fg.category(term=category)
 
