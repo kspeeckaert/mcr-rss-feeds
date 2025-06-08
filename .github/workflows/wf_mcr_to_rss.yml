@@ -10,6 +10,11 @@ on:
         required: true
         type: string
   workflow_dispatch:
+    inputs:
+      container_image:
+        description: 'The name of the container image (e.g., dotnet/aspnet)'
+        required: true
+        type: string
 
 jobs:
   generate-rss:
