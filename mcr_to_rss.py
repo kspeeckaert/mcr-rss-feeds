@@ -100,5 +100,5 @@ if __name__ == '__main__':
     if not Path(args.filename).is_file():
         logging.error(f'File not found: {args.filename}')
         exit(1)
-    print(args)
+
     process_repo_list(args.filename, args.feed_dir)
