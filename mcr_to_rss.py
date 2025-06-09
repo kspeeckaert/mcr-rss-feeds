@@ -1,9 +1,9 @@
 import argparse
 import datetime
 import logging
+from pathlib import Path
 import requests
 from requests.exceptions import HTTPError
-from pathlib import Path
 from feedgen.feed import FeedGenerator
 
 
