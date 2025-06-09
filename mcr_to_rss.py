@@ -1,11 +1,13 @@
 import sys
 import datetime
+from pathlib import Path
 import requests
 from feedgen.feed import FeedGenerator
 
 
 def generate_feed(repo):
 
+    # Get the repository details for the channel
     url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/details?reg=mar'
     output_file = f'{repo.replace("/", "_")}.xml'
 
@@ -13,7 +15,6 @@ def generate_feed(repo):
     response.raise_for_status()
     data = response.json()
 
-    #import pdb; pdb.set_trace()
     fg = FeedGenerator()
     fg.title(data['name'])
     # Make sure to always have a link, otherwise the RSS file is invalid
@@ -27,6 +28,7 @@ def generate_feed(repo):
     for category in data.get('categories', []):
         fg.category(term=category)
 
+    # Get the tag details for the individual items
     url = f'https://mcr.microsoft.com/api/v1/catalog/{repo}/tags?reg=mar'
     response = requests.get(url)
     response.raise_for_status()
@@ -38,6 +40,7 @@ def generate_feed(repo):
         fe.link(href=f'https://mcr.microsoft.com/en-us/artifact/mar/{repo}/tags')
         fe.published(tag.get('createdDate'))
         fe.updated(tag.get('lastModifiedDate'))
+        # Description is the command to pull the container image
         fe.description(f'docker pull mcr.microsoft.com/{repo}:{tag['name']}')
         fe.guid(f'{repo}:{tag['name']}', permalink=False)
 
@@ -46,9 +49,13 @@ def generate_feed(repo):
 
 
 def process_repo_list(filename):
+    # Open repositories list file, each line is a separate entry
     with open (filename) as f:
         repos = f.read().strip().splitlines()
     
+    # Ensure folder exists
+    Path('feeds').mkdir(exist_ok=True)
+
     for repo in repos:
         try:
             generate_feed(repo)
