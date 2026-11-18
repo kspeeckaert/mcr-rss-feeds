@@ -3,3 +3,4 @@ azureiotedge-agent
 azureiotedge-hub
 azureiotedge-api-proxy
 opc-publisher
+mssql/azure-sql-db-server
